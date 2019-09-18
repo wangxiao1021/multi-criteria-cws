@@ -6,6 +6,10 @@ Codes and corpora for paper "[Effective Neural Solution for Multi-Criteria Word 
 * Python3
 * dynet
 
+### dynet
+* DyNet为每一个训练样例动态地定义一个计算图。
+* 动态定义计算图的优点：每个训练样例有自己的计算图，可以在训练过程中动态的调整神经网络的拓扑结构，等Neural Module Network火起来后，这是个巨大的优势；方便debug，直接在IDE里面单步跟踪即可，可以随时查看任意变量的值。而静态编译计算图的theano是把theano function编译成C代码再跑的，debug非常恶心；更适合NLP问题，在NLP中，有大量的structured prediction问题，比如parsing，问题的目标是生成一棵树状结构，如语法树。因为每个训练样例的目标语法树是不一样的，用theano写起来十分不便。而dyent可以轻松地做树状结构的神经网络。比如，用20行代码即可实现Tree LSTM。
+
 ## Quick Start
 
 Run following command to prepare corpora, split them into train/dev/test sets etc.:
@@ -14,6 +18,9 @@ Run following command to prepare corpora, split them into train/dev/test sets et
 python3 convert_corpus.py 
 ```
 
+### pkl文件
+* pkl文件是python里面保存文件的一种格式，如果直接打开会显示一堆序列化的东西。
+ 
 Then convert a corpus `$dataset` into pickle file:
 
 ```bash
@@ -123,6 +130,8 @@ python3 convert_corpus.py
 - Thanks for those friends who helped us with the experiments.
 - Credits should also be given to those generous researchers who shared their corpora with the public, as listed in license table. Your datasets indeed helped those small groups (like us) without any funding.
 - Model implementation modified from a Dynet-1.x version by [rguthrie3](https://github.com/rguthrie3/BiLSTM-CRF).
+
+
 
 
 

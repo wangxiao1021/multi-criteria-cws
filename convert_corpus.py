@@ -265,14 +265,14 @@ def convert_all_sighan2008(datasets):
 
 
 if __name__ == '__main__':
-    print('Converting sighan2005 Simplified Chinese corpus')
+    print('Converting sighan2005 Simplified Chinese corpus')   # 都转换成简体的
     datasets = 'pku', 'msr', 'as', 'cityu'
     convert_all_sighan2005(datasets)
 
     print('Combining sighan2005 corpus to one joint Simplified Chinese corpus')
     datasets = 'pku', 'msr', 'as', 'cityu'
-    make_joint_corpus(datasets, 'joint-sighan2005')
-    make_bmes('joint-sighan2005')
+    make_joint_corpus(datasets, 'joint-sighan2005')    # 生成联合的训练数据
+    make_bmes('joint-sighan2005')   
 
     # For researchers who doesn't have access to sighan2008 corpus, use following freely available corpora please.
     print('Converting extra 6 corpora')
