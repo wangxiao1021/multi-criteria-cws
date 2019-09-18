@@ -67,7 +67,7 @@ def read_file(filename, w2i, t2i, c2i, max_iter=sys.maxsize, processing_word=get
     return instances, vocab_counter
 
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser() # argparse是python的命令行解析工具，或者说可以在python代码中调用shell的一些命令，从而简化和系统命令之间的交互。
 parser.add_argument("--training-data", required=True, dest="training_data", help="Training data .txt file")
 parser.add_argument("--dev-data", required=True, dest="dev_data", help="Development data .txt file")
 parser.add_argument("--test-data", required=True, dest="test_data", help="Test data .txt file")
@@ -77,9 +77,19 @@ parser.add_argument("--vocab-file", dest="vocab_file", default="vocab.txt", help
                     the train/dev/test data to use in outputting embeddings")
 options = parser.parse_args()
 
+# type为参数类型，例如int。
+# choices用来选择输入参数的范围，例如上面choices=【1,5,10】表示输入参数只能为1或5或10
+# required用来设置在命令中显示参数，当required为True时，在输入命令时需要显示该参数
+# help用来描述这个选项的作用
+# action表示该选项要执行的操作
+#
+# dest用来指定参数的位置
+# metavar用在help信息的输出中
+
+
 w2i = {}  # mapping from word to index
 t2i = {}  # mapping from tag to index
-c2i = {}
+c2i = {} # ?
 output = {}
 print('Making training dataset')
 output["training_instances"], output["training_vocab"] = read_file(options.training_data, w2i, t2i, c2i)

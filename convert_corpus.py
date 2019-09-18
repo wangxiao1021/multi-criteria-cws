@@ -25,21 +25,21 @@ def normalize(ustring):
     return rstring
 
 
-def preprocess(text):
+def preprocess(text):  # 文本预处理
     rNUM = '(-|\+)?\d+((\.|·)\d+)?%?'
     rENG = '[A-Za-z_.]+'
     sent = normalize(text.strip()).split()
     new_sent = []
     for word in sent:
-        word = re.sub('\s+', '', word, flags=re.U)
-        word = re.sub(rNUM, '0', word, flags=re.U)
-        word = re.sub(rENG, 'X', word)
+        word = re.sub('\s+', '', word, flags=re.U)   # flags?
+        word = re.sub(rNUM, '0', word, flags=re.U)   #数字统一用0替换
+        word = re.sub(rENG, 'X', word)  # 字母用X替换
         new_sent.append(word)
     return new_sent
 
 
-def to_sentence_list(text, split_long_sentence=False):
-    text = preprocess(text)
+def to_sentence_list(text, split_long_sentence=False):  # 句子切分
+    text = preprocess(text) # 先做预处理
     delimiter = set()
     delimiter.update('。！？：；…、，（）”’,;!?、,')
     delimiter.add('……')
@@ -57,7 +57,7 @@ def to_sentence_list(text, split_long_sentence=False):
     return sent_list
 
 
-def convert_file(src, des, split_long_sentence=False, encode='UTF-8'):
+def convert_file(src, des, split_long_sentence=False, encode='UTF-8'):  # 转换成text格式的
     with open(src, encoding=encode) as src, open(des, 'w', encoding=encode) as des:
         for line in src:
             for sent in to_sentence_list(line, split_long_sentence):
@@ -66,7 +66,7 @@ def convert_file(src, des, split_long_sentence=False, encode='UTF-8'):
                 #     print(' '.join(sent))
 
 
-def split_train_dev(dataset):
+def split_train_dev(dataset):  # 划分训练集和验证集
     root = 'data/' + dataset + '/raw/'
     with open(root + 'train-all.txt', encoding='UTF-8') as src, open(root + 'train.txt', 'w', encoding='UTF-8') as train, open(root + 'dev.txt',
                                                                                            'w', encoding='UTF-8') as dev:
@@ -78,8 +78,8 @@ def split_train_dev(dataset):
             dev.write(line)
 
 
-def combine_files(one, two, out):
-    if os.path.exists(out):
+def combine_files(one, two, out):  #合并文件
+    if os.path.exists(out):  # 如果已经有out 删除
         os.remove(out)
     with open(one, encoding='utf-8') as one, open(two, encoding='utf-8') as two, open(out, 'a', encoding='utf-8') as out:
         for line in one:
@@ -88,22 +88,22 @@ def combine_files(one, two, out):
             out.write(line)
 
 
-def bmes_tag(input_file, output_file):
+def bmes_tag(input_file, output_file):   # 字符级别标注
     with open(input_file, encoding='utf-8') as input_data, open(output_file, 'w', encoding='utf-8') as output_data:
         for line in input_data:
-            word_list = line.strip().split()
+            word_list = line.strip().split()  #Python strip() 方法用于移除字符串头尾指定的字符（默认为空格）。
             for word in word_list:
                 if len(word) == 1 or (len(word) > 2 and word[0] == '<' and word[-1] == '>'):
-                    output_data.write(word + "\tS\n")
+                    output_data.write(word + "\tS\n")  # 标注为句子开头
                 else:
-                    output_data.write(word[0] + "\tB\n")
-                    for w in word[1:len(word) - 1]:
-                        output_data.write(w + "\tM\n")
+                    output_data.write(word[0] + "\tB\n")  # 标注为句子开始词
+                    for w in word[1:len(word) - 1]:  # 不包括最后一个
+                        output_data.write(w + "\tM\n")  # 句子中间词
                     output_data.write(word[len(word) - 1] + "\tE\n")
             output_data.write("\n")
 
 
-def make_bmes(dataset='pku'):
+def make_bmes(dataset='pku'):   # + tag
     path = 'data/' + dataset + '/'
     make_sure_path_exists(path + 'bmes')
     bmes_tag(path + 'raw/train.txt', path + 'bmes/train.txt')
@@ -112,7 +112,7 @@ def make_bmes(dataset='pku'):
     bmes_tag(path + 'raw/test.txt', path + 'bmes/test.txt')
 
 
-def convert_sighan2005_dataset(dataset):
+def convert_sighan2005_dataset(dataset):  # conver2005
     root = 'data/' + dataset
     make_sure_path_exists(root)
     make_sure_path_exists(root + '/raw')
@@ -121,7 +121,7 @@ def convert_sighan2005_dataset(dataset):
     split_train_dev(dataset)
 
 
-def convert_sighan2008_dataset(dataset, utf=16):
+def convert_sighan2008_dataset(dataset, utf=16): # convert 2008
     root = 'data/' + dataset
     make_sure_path_exists(root)
     make_sure_path_exists(root + '/raw')
@@ -247,7 +247,7 @@ def make_joint_corpus(datasets, joint):
         elif not os.path.exists(os.path.dirname(old_file)):
             os.makedirs(os.path.dirname(old_file))
         for name in datasets:
-            append_tags(name, joint, part)
+            append_tags(name, joint, part) #？
 
 
 def convert_all_sighan2005(datasets):
