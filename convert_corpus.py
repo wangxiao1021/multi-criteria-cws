@@ -263,7 +263,7 @@ def convert_all_sighan2008(datasets):
         convert_sighan2008_dataset(dataset, 8 if dataset == 'ckip' or dataset == 'cityu' else 16)
         make_bmes(dataset)
 
-
+#主要是一些格式的转换，字符的预处理，tagging什么的
 if __name__ == '__main__':
     print('Converting sighan2005 Simplified Chinese corpus')   # 都转换成简体的
     datasets = 'pku', 'msr', 'as', 'cityu'

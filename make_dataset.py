@@ -25,8 +25,11 @@ NONE_TAG = "<NONE>"
 START_TAG = "<START>"
 END_TAG = "<STOP>"
 PADDING_CHAR = "<*>"
+# 处理完语料库之后，要制作这个实验需要的数据集
 
-
+# 读数据文件的函数。把一个文件变成单个样本的list，这里t2i是啥？
+# 小整数最大值为sys.maxsize  在这知道是个很大的整数就成
+# 关于processing https://www.jianshu.com/p/045255cefe94
 def read_file(filename, w2i, t2i, c2i, max_iter=sys.maxsize, processing_word=get_processing_word(lowercase=False)):
     """
     Read in a dataset and turn it into a list of instances.
@@ -36,30 +39,30 @@ def read_file(filename, w2i, t2i, c2i, max_iter=sys.maxsize, processing_word=get
     instances = []
     vocab_counter = collections.Counter()
     niter = 0
-    with codecs.open(filename, "r", "utf-8") as f:
+    with codecs.open(filename, "r", "utf-8") as f:  # 只读
         words, tags = [], []
         for line in f:
-            line = line.strip()
+            line = line.strip()  # 好像是默认按空格划分每一行
             if len(line) == 0 or line.startswith("-DOCSTART-"):
                 if len(words) != 0:
                     niter += 1
-                    if max_iter is not None and niter > max_iter:
+                    if max_iter is not None and niter > max_iter: # 这里是做了一下截断  看要多少数据
                         break
-                    instances.append(Instance(words, tags))
+                    instances.append(Instance(words, tags))  # 把之前已经取到的word和tag 加入到instances中
                     words, tags = [], []
             else:
                 word, tag = line.split()
-                word = processing_word(word)
-                vocab_counter[word] += 1
-                if word not in w2i:
+                word = processing_word(word)   # 预处理一下word
+                vocab_counter[word] += 1 # 计算这个word的数量
+                if word not in w2i:  # 生成word的index表示
                     w2i[word] = len(w2i)
-                if tag not in t2i:
+                if tag not in t2i:  # tag的index表示
                     t2i[tag] = len(t2i)
-                if is_dataset_tag(word):
+                if is_dataset_tag(word):  # 这个是干啥？
                     if word not in c2i:
                         c2i[word] = len(c2i)
                 else:
-                    for c in word:
+                    for c in word:  # 好像是生成每个字符的index表示
                         if c not in c2i:
                             c2i[c] = len(c2i)
                 words.append(w2i[word])
