@@ -26,7 +26,7 @@ DEFAULT_WORD_EMBEDDING_SIZE = 100
 # TRAIN_LIMIT = 10000000
 DEBUG_SCALE = 200
 
-
+# 双向LSTM+ CRF
 class BiLSTM_CRF:
     def __init__(self, tagset_size, num_lstm_layers, hidden_dim, word_embeddings, no_we_update, use_char_rnn,
                  char_embeddings, char_hidden_dim, margins, lowercase_words, vocab_size=None,
@@ -35,7 +35,7 @@ class BiLSTM_CRF:
         self.dropout = None
         self.model = dy.Model()
         self.tagset_size = tagset_size
-        self.margins = margins
+        self.margins = margins # ?
         self.we_update = not no_we_update
         self.lowercase_words = lowercase_words
 
@@ -44,21 +44,22 @@ class BiLSTM_CRF:
         if use_we:
             if word_embeddings is not None:  # Use pretrained embeddings
                 vocab_size = word_embeddings.shape[0]
-                word_embedding_dim = word_embeddings.shape[1]
-            self.words_lookup = self.model.add_lookup_parameters((vocab_size, word_embedding_dim))
+                # y.shape 返回的一个元组，代表 y 数据集的信息如（行，列） y.shape[0], 意思是：返回 y 中行的总数。 这个值在 y 是单特征的情况下 和 len(y) 是等价的， 也等价于 m 。即数据集中数据点的总数。
+                word_embedding_dim = word_embeddings.shape[1] # 每一个word的维度
+            self.words_lookup = self.model.add_lookup_parameters((vocab_size, word_embedding_dim)) ## Word weights
             if word_embeddings is not None:
                 self.words_lookup.init_from_array(word_embeddings)
         else:
             self.words_lookup = None
 
         # bigram embeddings
-        if options.bigram:
+        if options.bigram:  # b2i  bigram to index
             self.bigram_lookup = self.model.add_lookup_parameters((len(b2i), word_embedding_dim))
             self.bigram_lookup.init_from_array(bigram_embeddings)
 
         # Char LSTM Parameters
         self.use_char_rnn = use_char_rnn
-        if use_char_rnn:
+        if use_char_rnn: # 字符级别的
             if char_embeddings is not None:
                 charset_size = char_embeddings.shape[0]
                 char_embedding_dim = char_embeddings.shape[1]

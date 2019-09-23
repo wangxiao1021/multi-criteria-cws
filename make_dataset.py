@@ -20,6 +20,8 @@ from utils import get_processing_word, read_pretrained_embeddings, is_dataset_ta
 
 Instance = collections.namedtuple("Instance", ["sentence", "tags"])
 
+# 这里面应该就是生成 词 字符 tag的index表示
+
 UNK_TAG = "<UNK>"
 NONE_TAG = "<NONE>"
 START_TAG = "<START>"
@@ -112,7 +114,7 @@ output["t2i"] = t2i
 output["c2i"] = c2i
 
 # Read embedding
-if options.word_embeddings:
+if options.word_embeddings:   # 读取embedding
     output["word_embeddings"] = read_pretrained_embeddings(options.word_embeddings, w2i)
 
 make_sure_path_exists(os.path.dirname(options.output))
@@ -121,10 +123,28 @@ print('Saving dataset to {}'.format(options.output))
 with open(options.output, "wb") as outfile:
     pickle.dump(output, outfile)
 
+#Python中的Pickle模块实现了基本的数据序列与反序列化。
+
+# 一、dump()方法
+#
+# pickle.dump(obj, file, [,protocol])
+#
+# 注释：序列化对象，将对象obj保存到文件file中去。参数protocol是序列化模式，默认是0（ASCII协议，表示以文本的形式进行序列化），protocol的值还可以是1和2（1和2表示以二进制的形式进行序列化。其中，1是老式的二进制协议；2是新二进制协议）。file表示保存到的类文件对象，file必须有write()接口，file可以是一个以'w'打开的文件或者是一个StringIO对象，也可以是任何可以实现write()接口的对象。
+#
+#
+#
+# 二、load()方法
+#
+# pickle.load(file)
+#
+# 注释：反序列化对象，将文件中的数据解析为一个python对象。file中有read()接口和readline()接口
+
+
 with codecs.open(os.path.dirname(options.output) + "/words.txt", "w", "utf-8") as vocabfile:
     for word in w2i.keys():
-        vocabfile.write(word + "\n")
+        vocabfile.write(word + "\n")   # 一行一个word index表示
 
 with codecs.open(os.path.dirname(options.output) + "/chars.txt", "w", "utf-8") as vocabfile:
     for char in c2i.keys():
-        vocabfile.write(char + "\n")
+        vocabfile.write(char + "\n")   # 每一行是字符的inex表示
+
